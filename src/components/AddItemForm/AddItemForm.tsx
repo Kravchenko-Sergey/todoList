@@ -1,18 +1,20 @@
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
-import { Button, IconButton, TextField } from '@mui/material'
+import React, { ChangeEvent, KeyboardEvent, memo, useState } from 'react'
+import { IconButton, TextField } from '@mui/material'
 import { ControlPoint } from '@mui/icons-material'
+import { v1 } from 'uuid'
 
 type AddItemFormPropsType = {
-	callBack: (title: string) => void
+	callBack: (title: string, newId: string) => void
 }
 
-const AddItemForm = (props: AddItemFormPropsType) => {
-	let [title, setTitle] = useState('')
-	let [error, setError] = useState<string | null>(null)
+export const AddItemForm = memo((props: AddItemFormPropsType) => {
+	const [title, setTitle] = useState('')
+	const [error, setError] = useState<string | null>(null)
+	const newId = v1()
 	const addTask = () => {
 		let newTitle = title.trim()
 		if (newTitle !== '') {
-			props.callBack(newTitle)
+			props.callBack(newTitle, newId)
 			setTitle('')
 		} else {
 			setError('Title is required')
@@ -24,10 +26,8 @@ const AddItemForm = (props: AddItemFormPropsType) => {
 	}
 
 	const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-		setError(null)
-		if (e.charCode === 13) {
-			addTask()
-		}
+		error !== null && setError(null)
+		e.charCode === 13 && addTask()
 	}
 	return (
 		<div>
@@ -39,12 +39,11 @@ const AddItemForm = (props: AddItemFormPropsType) => {
 				onKeyPress={onKeyPressHandler}
 				error={!!error}
 				helperText={error}
+				size='small'
 			/>
 			<IconButton onClick={addTask} color={'primary'}>
 				<ControlPoint />
 			</IconButton>
 		</div>
 	)
-}
-
-export default AddItemForm
+})
