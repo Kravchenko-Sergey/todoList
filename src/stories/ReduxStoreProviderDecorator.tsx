@@ -2,7 +2,6 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { combineReducers, createStore } from 'redux'
 import { v1 } from 'uuid'
-import { AppRootStateType } from '../state/store'
 import { tasksReducer } from '../state/reducers/tasksReducer'
 import { todoListsReducer } from '../state/reducers/todoListsReducer'
 
