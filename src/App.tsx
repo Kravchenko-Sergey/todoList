@@ -1,23 +1,29 @@
 import React, { useCallback } from 'react'
 import './App.css'
-import { TaskType, Todolist } from './components/Todolist/Todolist'
-import { AddItemForm } from './components/AddItemForm/AddItemForm'
-import { AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography } from '@mui/material'
+import { TaskType, Todolist } from './Todolist'
+import { AddItemForm } from './AddItemForm'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
 import { Menu } from '@mui/icons-material'
 import {
-	addTodoListAC,
-	updateTodoListTitleAC,
-	changeFilterAC,
-	removeTodoListAC
-} from './state/reducers/todoListsReducer'
-import { addTaskAC, changeStatusAC, removeTaskAC, updateTaskAC } from './state/reducers/tasksReducer'
+	addTodolistAC,
+	changeTodolistFilterAC,
+	changeTodolistTitleAC,
+	removeTodolistAC
+} from './state/todolists-reducer'
+import { addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from './state/tasks-reducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppRootStateType } from './state/store'
 
 export type FilterValuesType = 'all' | 'active' | 'completed'
-export type TodoListType = {
+export type TodolistType = {
 	id: string
-
 	title: string
 	filter: FilterValuesType
 }
@@ -26,90 +32,89 @@ export type TasksStateType = {
 	[key: string]: Array<TaskType>
 }
 
-export const App = () => {
+function App() {
+	const todolists = useSelector<AppRootStateType, Array<TodolistType>>(state => state.todolists)
+	const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
 	const dispatch = useDispatch()
 
-	const todoLists = useSelector<AppRootStateType, TodoListType[]>(state => state.todoLists)
+	const removeTask = useCallback(function (id: string, todolistId: string) {
+		const action = removeTaskAC(id, todolistId)
+		dispatch(action)
+	}, [])
 
-	const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+	const addTask = useCallback(function (title: string, todolistId: string) {
+		const action = addTaskAC(title, todolistId)
+		dispatch(action)
+	}, [])
 
-	const updateTask = useCallback(
-		(todolistId: string, taskId: string, newTitle: string) => {
-			dispatch(updateTaskAC(todolistId, taskId, newTitle))
-		},
-		[dispatch]
-	)
+	const changeStatus = useCallback(function (id: string, isDone: boolean, todolistId: string) {
+		const action = changeTaskStatusAC(id, isDone, todolistId)
+		dispatch(action)
+	}, [])
 
-	const updateTodolistTitle = useCallback(
-		(todolistID: string, newTitle: string) => {
-			dispatch(updateTodoListTitleAC(todolistID, newTitle))
-		},
-		[dispatch]
-	)
+	const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
+		const action = changeTaskTitleAC(id, newTitle, todolistId)
+		dispatch(action)
+	}, [])
 
-	const removeTask = useCallback(
-		(id: string, todolistId: string) => {
-			dispatch(removeTaskAC(id, todolistId))
-		},
-		[dispatch]
-	)
+	const changeFilter = useCallback(function (value: FilterValuesType, todolistId: string) {
+		const action = changeTodolistFilterAC(todolistId, value)
+		dispatch(action)
+	}, [])
 
-	const addTask = useCallback(
-		(todolistId: string, title: string) => {
-			dispatch(addTaskAC(todolistId, title))
-		},
-		[dispatch]
-	)
+	const removeTodolist = useCallback(function (id: string) {
+		const action = removeTodolistAC(id)
+		dispatch(action)
+	}, [])
 
-	const changeStatus = useCallback(
-		(id: string, isDone: boolean, todoListId: string) => {
-			dispatch(changeStatusAC(id, isDone, todoListId))
-		},
-		[dispatch]
-	)
+	const changeTodolistTitle = useCallback(function (id: string, title: string) {
+		const action = changeTodolistTitleAC(id, title)
+		dispatch(action)
+	}, [])
 
-	const changeFilter = useCallback(
-		(value: FilterValuesType, todolistId: string) => {
-			dispatch(changeFilterAC(value, todolistId))
-		},
-		[dispatch]
-	)
-
-	const removeTodolist = useCallback(
-		(id: string) => {
-			dispatch(removeTodoListAC(id))
-		},
-		[dispatch]
-	)
-
-	const addTodoList = useCallback(
-		(newTitle: string) => {
-			dispatch(addTodoListAC(newTitle))
+	const addTodolist = useCallback(
+		(title: string) => {
+			const action = addTodolistAC(title)
+			dispatch(action)
 		},
 		[dispatch]
 	)
 
 	return (
 		<div className='App'>
-			<AppBar position={'static'}>
+			<AppBar position='static'>
 				<Toolbar>
-					<IconButton edge={'start'} color={'inherit'} aria-label={'menu'}>
+					<IconButton edge='start' color='inherit' aria-label='menu'>
 						<Menu />
 					</IconButton>
-					<Typography>News</Typography>
-					<Button color={'inherit'}>Login</Button>
+					<Typography variant='h6'>News</Typography>
+					<Button color='inherit'>Login</Button>
 				</Toolbar>
 			</AppBar>
 			<Container fixed>
-				<Grid container style={{ padding: '20px 0' }}>
-					<AddItemForm callBack={addTodoList} />
+				<Grid container style={{ padding: '20px' }}>
+					<AddItemForm addItem={addTodolist} />
 				</Grid>
 				<Grid container spacing={3}>
-					{todoLists.map(tl => {
+					{todolists.map(tl => {
+						let allTodolistTasks = tasks[tl.id]
+
 						return (
 							<Grid item key={tl.id}>
 								<Paper style={{ padding: '10px' }}>
-									<Todolist todoListId={tl.id} title={tl.title} filter={tl.filter} />
+									<Todolist
+										id={tl.id}
+										title={tl.title}
+										tasks={allTodolistTasks}
+										removeTask={removeTask}
+										changeFilter={changeFilter}
+										addTask={addTask}
+										changeTaskStatus={changeStatus}
+										filter={tl.filter}
+										removeTodolist={removeTodolist}
+										changeTaskTitle={changeTaskTitle}
+										changeTodolistTitle={changeTodolistTitle}
+									/>
 								</Paper>
 							</Grid>
 						)
@@ -119,3 +124,5 @@ export const App = () => {
 		</div>
 	)
 }
+
+export default App
