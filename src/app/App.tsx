@@ -22,7 +22,7 @@ import {
 } from '../features/TodolistsList/todolists-reducer'
 import { addTaskTC, removeTaskTC, updateTaskTC } from '../features/TodolistsList/tasks-reducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { AppRootStateType } from './store'
+import { RootState } from './store'
 import { TaskStatuses, TaskType } from '../api/todolists-api'
 import { TodolistsList } from '../features/TodolistsList/TodolistList'
 

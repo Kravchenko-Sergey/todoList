@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { AppRootStateType } from '../../app/store'
+import { RootState } from '../../app/store'
 import {
 	changeTodolistFilterAC,
 	changeTodolistTitleTC,
@@ -17,11 +17,12 @@ import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
 import Paper from '@mui/material/Paper'
 import { Todolist } from './Todolist/Todolist'
 import { TasksStateType } from '../../app/App'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 
 export const TodolistsList = () => {
-	const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
-	const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-	const dispatch = useDispatch()
+	const todolists = useAppSelector(state => state.todolists)
+	const tasks = useSelector<RootState, TasksStateType>(state => state.tasks)
+	const dispatch = useAppDispatch()
 
 	useEffect(() => {
 		dispatch(fetchTodolistsTC())
