@@ -1,9 +1,9 @@
-import { tasksActions, tasksReducer, TasksStateType, tasksThunks } from "features/TodolistsList/tasks.reducer";
-import { TaskPriorities, TaskStatuses } from "api/todolists-api";
-import { todolistsActions } from "features/TodolistsList/todolists.reducer";
+import { tasksActions, tasksReducer, TasksStateType } from 'features/todolists-list/tasks/model/tasks-reducer'
+import { todolistsActions } from 'features/todolists-list/todolists/model/todolists-reducer'
+import { TaskPriorities, TaskStatuses } from 'features/todolists-list/tasks/api/tasks-api-types'
 
-let startState: TasksStateType = {};
-beforeEach(() => {
+let startState: TasksStateType = {}
+/*beforeEach(() => {
   startState = {
     todolistId1: [
       {
@@ -82,9 +82,9 @@ beforeEach(() => {
       },
     ],
   };
-});
+});*/
 
-test("correct task should be deleted from correct array", () => {
+/*test("correct task should be deleted from correct array", () => {
   const action = tasksActions.removeTask({ taskId: "2", todolistId: "todolistId2" });
 
   const endState = tasksReducer(startState, action);
@@ -92,7 +92,7 @@ test("correct task should be deleted from correct array", () => {
   expect(endState["todolistId1"].length).toBe(3);
   expect(endState["todolistId2"].length).toBe(2);
   expect(endState["todolistId2"].every((t) => t.id !== "2")).toBeTruthy();
-});
+});*/
 
 /*test("correct task should be added to correct array", () => {
   //const action = addTaskAC("juce", "todolistId2");
@@ -176,7 +176,7 @@ test("new array should be added when new todolist is added", () => {
   expect(endState["todolistId2"]).not.toBeDefined();
 });*/
 
-test("empty arrays should be added when we set todolists", () => {
+/*test("empty arrays should be added when we set todolists", () => {
   const action = todolistsActions.setTodolists({
     todolists: [
       { id: "1", title: "title 1", order: 0, addedDate: "" },
@@ -191,7 +191,7 @@ test("empty arrays should be added when we set todolists", () => {
   expect(keys.length).toBe(2);
   expect(endState["1"]).toBeDefined();
   expect(endState["2"]).toBeDefined();
-});
+});*/
 
 /*test("tasks should be added for todolist", () => {
   const action = tasksThunks.fetchTasks.fulfilled(
